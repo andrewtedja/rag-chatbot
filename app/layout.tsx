@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Sora, Space_Grotesk } from "next/font/google";
+import { Providers } from "./provider";
+
 import "./globals.css";
 
-const inter = Inter({
-	subsets: ["latin"],
-	variable: "--font-inter",
-});
+// const inter = Inter({
+// 	subsets: ["latin"],
+// 	variable: "--font-inter",
+// });
 
-const spaceGrotesk = Space_Grotesk({
+// const spaceGrotesk = Space_Grotesk({
+// 	subsets: ["latin"],
+// 	variable: "--font-space-grotesk",
+// });
+
+const sora = Sora({
 	subsets: ["latin"],
-	variable: "--font-space-grotesk",
+	variable: "--font-sora",
 });
 
 export const metadata: Metadata = {
@@ -23,11 +30,11 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="id" suppressHydrationWarning>
 			<body
-				className={`${inter.className} ${spaceGrotesk.className} antialiased`}
+				className={`${sora.className} antialiased h-full overflow-hidden`}
 			>
-				{children}
+				<Providers>{children}</Providers>
 			</body>
 		</html>
 	);
