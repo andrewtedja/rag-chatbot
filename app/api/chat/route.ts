@@ -2,11 +2,6 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { DataAPIClient } from "@datastax/astra-db-ts";
 
-type ItbDoc = {
-	$vector: number[];
-	text: string;
-};
-
 export async function POST(req: Request) {
 	const { messages } = await req.json();
 	const userMessage = messages[messages.length - 1].content;
@@ -29,43 +24,74 @@ export async function POST(req: Request) {
 		namespace: process.env.ASTRA_DB_NAMESPACE!,
 	});
 
-	const collection = await db.collection(process.env.ASTRA_DB_COLLECTION!);
+	try {
+		const collection = await db.collection(
+			process.env.ASTRA_DB_COLLECTION!
+		);
 
-	// Vector Search
-	const results = await collection.find(
-		{},
-		{
-			sort: { $vector: queryEmbedding },
-			limit: 5,
-		}
-	);
+		// Vector Search
+		const results = await collection.find(
+			{},
+			{
+				sort: { $vector: queryEmbedding },
+				limit: 5,
+			}
+		);
 
-	// gabungin semua konten hasil pencarian
-	// note: collection.find() itu hasilnya FindCursor<FoundDoc<SomeDoc>, FoundDoc<SomeDoc>>, jadi perlu di .toArray()
+		// gabungin semua konten hasil pencarian
+		// note: collection.find() itu hasilnya FindCursor<FoundDoc<SomeDoc>, FoundDoc<SomeDoc>>, jadi perlu di .toArray()
 
-	const docs = await results.toArray();
-	const context = docs.map((doc) => doc.text || "").join("\n\n");
+		const docs = await results.toArray();
+		const context = docs.map((doc) => doc.text || "").join("\n\n");
 
-	// SYSTEM PROMPTING RAG
-	const systemPrompt = `
-        You are ROGA, Elephant Mascot and Chatbot of Bandung Institute of Technology (ITB).
+		// SYSTEM PROMPTING RAG
+		const systemPrompt = `
+        You are ROGA, an AI assistant who knows everything about Institut Teknologi Bandung (ITB). You are an elephant mascot of ITB.
         Jawab hanya menggunakan konteks berikut.
-        Jika tidak ada di konteks, jawab: "Maaf, untuk pertanyaan tersebut, aku tidak bisa menjawab."
+        Jika konteks tidak include informasi jawaban yang anda butuhkan, use existing knowledge dan jangan mention source of your information atau what the context does or doesn't include. If you really don't know the answer, jawab: "Maaf, untuk pertanyaan tersebut, aku tidak bisa menjawab."
+        Format Responses using markdown where applicable, and don't return images.
 
-        Context:
+        START CONTEXT
         ${context}
+        END CONTEXT
     `;
 
-	// STREAMING RESPONSE (useChat())
-	const completion = await openai.chat.completions.create({
-		model: "gpt-4o-mini",
-		stream: true,
-		messages: [{ role: "system", content: systemPrompt }, ...messages],
-	});
+		// STREAMING RESPONSE (useChat())
+		const completion = await openai.chat.completions.create({
+			model: "gpt-4o-mini",
+			stream: true,
+			messages: [{ role: "system", content: systemPrompt }, ...messages],
+		});
 
-	//non stream
-	// return NextResponse.json(completion.choices[0].message);
+		const encoder = new TextEncoder();
+		const stream = new ReadableStream({
+			async start(controller) {
+				try {
+					for await (const chunk of completion) {
+						const content = chunk.choices[0]?.delta?.content || "";
+						if (content) {
+							controller.enqueue(encoder.encode(content));
+						}
+					}
+					controller.close();
+				} catch (error) {
+					console.error(error);
+					controller.error(error as Error);
+				}
+			},
+		});
 
-	// stream
-	return new NextResponse(completion.toReadableStream());
+		return new Response(stream, {
+			headers: {
+				"Content-Type": "text/plain; charset=utf-8",
+				"Transfer-Encoding": "chunked",
+			},
+		});
+	} catch (error) {
+		console.error(error);
+		return NextResponse.json(
+			{ error: "Internal Server Error" },
+			{ status: 500 }
+		);
+	}
 }
