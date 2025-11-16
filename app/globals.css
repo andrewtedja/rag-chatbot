@@ -22,6 +22,11 @@ body {
 	color: var(--foreground);
 }
 @layer components {
+	html {
+		cursor: pointer;
+		scroll-behavior: smooth;
+	}
+
 	.loader {
 		@apply w-[60px] aspect-[4];
 		--c: #383838;
