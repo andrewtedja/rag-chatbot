@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	--background: #ffffff;
+	--foreground: #171717;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+	:root {
+		--background: #0a0a0a;
+		--foreground: #ededed;
+	}
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+	background: var(--background);
+	color: var(--foreground);
+}
+@layer components {
+	.loader {
+		@apply w-[60px] aspect-[4];
+		--c: #383838;
+		--t: #0000;
+		background: no-repeat
+				radial-gradient(circle closest-side, var(--c) 90%, var(--t)) 0%
+				50%,
+			no-repeat
+				radial-gradient(circle closest-side, var(--c) 90%, var(--t)) 50%
+				50%,
+			no-repeat
+				radial-gradient(circle closest-side, var(--c) 90%, var(--t))
+				100% 50%;
+		background-size: calc(100% / 3) 100%;
+		animation: loading 1s infinite linear;
+	}
+}
+
+@keyframes loading {
+	33% {
+		background-size: calc(100% / 3) 0, calc(100% / 3) 100%,
+			calc(100% / 3) 100%;
+	}
+	50% {
+		background-size: calc(100% / 3) 100%, calc(100% / 3) 0,
+			calc(100% / 3) 100%;
+	}
+	66% {
+		background-size: calc(100% / 3) 100%, calc(100% / 3) 100%,
+			calc(100% / 3) 0;
+	}
 }
