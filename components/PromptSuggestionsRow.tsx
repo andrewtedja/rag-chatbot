@@ -18,23 +18,7 @@ export const PromptSuggestionsRow = ({
 				<button
 					key={index}
 					onClick={() => onPromptClick?.(prompt)}
-					className="
-            px-5 py-3
-            bg-white dark:bg-gray-800
-            border-2 border-blue-200 dark:border-gray-600
-            rounded-2xl 
-            text-sm text-gray-700 dark:text-gray-200
-            font-medium
-            shadow-md
-            hover:bg-linear-to-r hover:from-blue-50 hover:to-indigo-50
-            dark:hover:from-gray-700 dark:hover:to-gray-700
-            hover:border-blue-400 dark:hover:border-blue-500
-            hover:shadow-lg
-            hover:scale-105
-            transition-all duration-200 
-            active:scale-95
-            cursor-pointer
-          "
+					className="px-5 py-3 rounded-2xl bg-card text-foreground border border-border shadow-md hover:bg-muted hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
 				>
 					{prompt}
 				</button>
