@@ -1,30 +1,63 @@
 @import "tailwindcss";
 
 :root {
-	--background: #ffffff;
-	--foreground: #171717;
+	/* soft indigo-tinted background (masih terasa putih) */
+	--background: #f7f8fe;
+	/* teks tetap dark, no change */
+	--foreground: 240 10% 3.9%;
+
+	/* subtle indigo-muted surfaces */
+	--muted-foreground: 230 10% 45%;
+	--muted: #f2f3f8;
+	/* border dengan hint indigo, lembut */
+	--border: 225 50% 80%;
+
+	/* input & card a tiny bit more blue-ish */
+	--input: 225 40% 92%;
+	--card: 220 35% 99%;
+	--card-foreground: 240 10% 3.9%;
 }
 
 @theme inline {
-	--color-background: var(--background);
-	--color-foreground: var(--foreground);
+	--color-background: hsl(var(--background));
+	--color-foreground: hsl(var(--foreground));
+	--color-border: hsl(var(--border));
+	--color-muted: hsl(var(--muted));
+	--color-muted-foreground: hsl(var(--muted-foreground));
+	--color-card: hsl(var(--card));
+	--color-card-foreground: hsl(var(--card-foreground));
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
 	:root {
 		--background: #0a0a0a;
 		--foreground: #ededed;
 	}
-}
+} */
+html.dark {
+	--background: 220 17% 12%;
+	--foreground: 0 0% 95%;
 
+	--muted: 225 15% 18%;
+	--muted-foreground: 215 20% 65%;
+
+	--border: 220 15% 20%;
+	--input: 220 15% 20%;
+
+	--card: 220 15% 14%;
+	--card-foreground: 0 0% 95%;
+}
 body {
 	background: var(--background);
 	color: var(--foreground);
 }
 @layer components {
 	html {
-		cursor: pointer;
 		scroll-behavior: smooth;
+	}
+
+	nav * {
+		@apply pointer-events-auto;
 	}
 
 	.loader {
