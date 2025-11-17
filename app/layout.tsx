@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Sora } from "next/font/google";
-// import { Providers } from "./provider";
+import { Providers } from "./provider";
 
 import "./globals.css";
 
@@ -34,7 +34,7 @@ export default function RootLayout({
 			<body
 				className={`${sora.className} antialiased h-full overflow-hidden`}
 			>
-				{children}
+				<Providers>{children}</Providers>
 			</body>
 		</html>
 	);
