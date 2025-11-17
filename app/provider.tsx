@@ -9,7 +9,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
 			defaultTheme="system"
 			enableSystem
 			disableTransitionOnChange
-			forcedTheme={undefined}
 		>
 			{children}
 		</ThemeProvider>

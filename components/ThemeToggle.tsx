@@ -22,9 +22,11 @@ export default function ThemeToggle() {
 				transition cursor-pointer
 			"
 		>
-			<Sun className="h-5 w-5 text-amber-500 dark:hidden" />
-
-			<Moon className="h-5 w-5 text-foreground hidden dark:block" />
+			{resolvedTheme === "dark" ? (
+				<Moon className="h-5 w-5 text-foreground" />
+			) : (
+				<Sun className="h-5 w-5 text-amber-500" />
+			)}
 		</button>
 	);
 }
