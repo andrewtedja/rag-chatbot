@@ -44,7 +44,12 @@ export const Bubble = ({ message }: BubbleProps) => {
           ${isUser ? "bg-card rounded-br-md" : "bg-card rounded-bl-md"}
         `}
 			>
-				<div className="prose prose-sm dark:prose-invert max-w-none [&_a]:text-blue-500 [&_a]:underline hover:[&_a]:text-blue-600 dark:[&_a]:text-blue-400 dark:hover:[&_a]:text-blue-300">
+				<div className="prose prose-sm dark:prose-invert max-w-none
+					[&_a]:text-blue-500 [&_a]:underline hover:[&_a]:text-blue-600
+					dark:[&_a]:text-blue-400 dark:hover:[&_a]:text-blue-300
+					[&_ul]:list-disc [&_ul]:pl-4 [&_ul]:my-2
+					[&_ol]:list-decimal [&_ol]:pl-4 [&_ol]:my-2
+					[&_li]:my-1">
 					<ReactMarkdown remarkPlugins={[remarkGfm]}>
 						{message.content}
 					</ReactMarkdown>
