@@ -2,6 +2,11 @@ import { Message } from "ai";
 import Image from "next/image";
 import rogaLogo from "@/public/assets/roga-mascot.png";
 
+// ini buat markdown
+import ReactMarkdown from "react-markdown";
+
+import remarkGfm from "remark-gfm";
+
 interface BubbleProps {
 	message: Message;
 }
@@ -11,9 +16,7 @@ export const Bubble = ({ message }: BubbleProps) => {
 	if (!message?.content?.trim()) return null;
 
 	return (
-		<div
-			className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}
-		>
+		<div className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
 			<div
 				className={`
           shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-md
@@ -41,9 +44,11 @@ export const Bubble = ({ message }: BubbleProps) => {
           ${isUser ? "bg-card rounded-br-md" : "bg-card rounded-bl-md"}
         `}
 			>
-				<p className="text-sm leading-relaxed whitespace-pre-wrap wrap-break-word">
-					{message.content}
-				</p>
+				<div className="prose prose-sm dark:prose-invert max-w-none [&_a]:text-blue-500 [&_a]:underline hover:[&_a]:text-blue-600 dark:[&_a]:text-blue-400 dark:hover:[&_a]:text-blue-300">
+					<ReactMarkdown remarkPlugins={[remarkGfm]}>
+						{message.content}
+					</ReactMarkdown>
+				</div>
 			</div>
 		</div>
 	);

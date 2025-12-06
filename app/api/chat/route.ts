@@ -25,9 +25,7 @@ export async function POST(req: Request) {
 	});
 
 	try {
-		const collection = await db.collection(
-			process.env.ASTRA_DB_COLLECTION!
-		);
+		const collection = await db.collection(process.env.ASTRA_DB_COLLECTION!);
 
 		// Vector Search
 		const results = await collection.find(
@@ -41,7 +39,20 @@ export async function POST(req: Request) {
 		// gabungin semua konten hasil pencarian
 		// note: collection.find() itu hasilnya FindCursor<FoundDoc<SomeDoc>, FoundDoc<SomeDoc>>, jadi perlu di .toArray()
 
-		const docs = await results.toArray();
+		let docs = [];
+		try {
+			docs = await results.toArray();
+		} catch (error) {
+			console.error("Error converting results to array: ", error);
+
+			// fallback
+			if (results && typeof results[Symbol.asyncIterator] === "function") {
+				for await (const doc of results) {
+					docs.push(doc);
+				}
+			}
+		}
+
 		const context = docs.map((doc) => doc.text || "").join("\n\n");
 
 		// SYSTEM PROMPTING RAG
@@ -61,8 +72,8 @@ export async function POST(req: Request) {
 		6. Jangan mengulang kalimat “berdasarkan konteks” ataupun menyebut dokumen.
 		7. Format jawaban dengan markdown bila relevan.
 		8. Jangan mengembalikan gambar.
-		
-		
+
+
 
 		START CONTEXT
 		${context}

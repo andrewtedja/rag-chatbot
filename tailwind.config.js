@@ -1,5 +1,6 @@
 module.exports = {
-	content: ["./src/**/*.{js,ts,jsx,tsx}"],
+	// Fix: Point to actual file locations (app/, components/, not src/)
+	content: ["./app/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
 	theme: {
 		extend: {
 			fontFamily: {
@@ -10,5 +11,6 @@ module.exports = {
 		},
 	},
 	darkMode: "class",
-	plugins: [],
+	// Add typography plugin for markdown styling
+	plugins: [require.resolve("@tailwindcss/typography")],
 };

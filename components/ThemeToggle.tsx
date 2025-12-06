@@ -11,6 +11,8 @@ export default function ThemeToggle() {
 		setTheme(resolvedTheme === "dark" ? "light" : "dark");
 	}, [resolvedTheme, setTheme]);
 
+	// next-themes handles SSR automatically, so we don't need mounted state
+
 	return (
 		<button
 			onClick={handleToggle}
