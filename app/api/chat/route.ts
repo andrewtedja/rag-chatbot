@@ -36,6 +36,7 @@ export async function POST(req: Request) {
 			{
 				sort: { $vector: queryEmbedding },
 				limit: 5,
+				includeSimilarity: true,
 			}
 		);
 
@@ -60,16 +61,30 @@ export async function POST(req: Request) {
 
 		// SYSTEM PROMPTING RAG
 		const systemPrompt = `
-		Kamu adalah Roga, asisten AI bermaskot gajah dari ITB. Jawab ramah, jelas, lucu, informatif; jika ditanya identitas, perkenalkan diri.
-        Gunakan hanya konteks berikut untuk fakta ITB. Jika ditanya suatu list yang penting (seperti jurusan), jawab dengan lengkap dan benar. Jika pertanyaan tidak terkait ITB (kampus, akademik, fakultas/jurusan, fasilitas, organisasi, dosen, kehidupan mahasiswa, organisasi/himpunan, sejarah, pendaftaran, beasiswa, atau lainnya),
-        dan jika konteks tidak memuat jawabannya, try your best to answer dengan gunakan pengetahuan umum tentang ITB dan cite url if needed; jika tetap tidak tahu, jawab: "Maaf, untuk pertanyaan tersebut, aku tidak bisa menjawab."
-        Larangan: jangan menyebut konteks/dokumen/RAG; jangan meminta maaf kecuali saat tidak tahu; jangan memakai frasa seperti "berdasarkan konteks"; jangan mengembalikan gambar.
-        Gunakan markdown bila relevan dan minimalkan whitespace tanpa mengorbankan keterbacaan.
+        Kamu adalah Roga, asisten AI ITB bermaskot gajah.
+        Gaya bicara: ramah, jelas, sopan, sedikit lucu. Gunakan Markdown bila perlu.
 
-		START CONTEXT
-		${context}
-		END CONTEXT
-    `;
+        **ATURAN PRIORITAS:**
+        1. HANYA jawab pertanyaan yang RELEVAN dengan ITB (akademik, kampus, mahasiswa, budaya, lokasi, dll).
+
+        2. Untuk pertanyaan ITB:
+        - **Ada di konteks** → gunakan konteks sebagai sumber utama. Boleh tambah penjelasan umum, TAPI jangan ngarang data faktual (angka, nama resmi, aturan).
+        - **Sebagian di konteks** → gunakan konteks + pengetahuan umum ITB yang AMAN (misal: lokasi gedung umum, tips belajar, pengalaman mahasiswa). Jangan buat daftar resmi yang ga ada di konteks.
+        - **Tidak ada di konteks** → kalau masih terkait ITB atau pertanyaan mengandung "itb", try to answer dengan pengetahuan umum with your best try.
+        3. Jika pertanyaan TIDAK terkait ITB → tolak dengan sopan: "Maaf, aku kurang tahu tentang hal itu!"
+
+        **LARANGAN:**
+        - Jangan sebut "konteks", "RAG", "dokumen", "database".
+        - Jangan ngarang: fakultas, jurusan, singkatan resmi, nama pejabat, aturan akademik, angka statistik.
+        - Jangan keluar dari topik ITB.
+        `.trim();
+
+		const userPrompt = `
+        Konteks:
+        ${context}
+
+        Pertanyaan: ${userMessage}
+        `.trim();
 
 		// STREAMING RESPONSE (useChat())
 
@@ -88,11 +103,21 @@ export async function POST(req: Request) {
 		// temp itu kalo tinggi bakal ngarang, kalo rendah bakal konservatif
 		// top_p itu seberapa besar range pilihan kata (0.1 -> hanya kata yg umum aja)
 
+		console.log("=== TOP 5 RETRIEVED DOCS ===");
+		docs.slice(0, 5).forEach((doc, i) => {
+			console.log(`[${i}] Score: ${doc.$similarity || "N/A"}`);
+			console.log(`Text: ${doc.text?.substring(0, 200)}...\n`);
+		});
+		console.log("=== FULL CONTEXT LENGTH ===", context.length);
+
 		// OpenAI
 		const completion = await openai.chat.completions.create({
 			model: "gpt-4o-mini",
 			stream: true,
-			messages: [{ role: "system", content: systemPrompt }, ...messages],
+			messages: [
+				{ role: "system", content: systemPrompt },
+				{ role: "user", content: userPrompt },
+			],
 		});
 
 		const encoder = new TextEncoder();

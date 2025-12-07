@@ -6,9 +6,9 @@ export const PromptSuggestionsRow = ({
 	onPromptClick,
 }: PromptSuggestionsRowProps) => {
 	const prompts = [
-		"Ada jurusan apa aja sih di ITB?",
+		"Ada fakultas apa aja sih di ITB?",
 		"Ceritain dong kampus-kampus yang ada di ITB",
-		"Rank the best makanan di sekitar ITB yang wajib dicoba!",
+		"Rektor ITB saat ini siapa ya?",
 		"Untuk daftar ITB, requirementsnya apa saja?",
 	];
 
