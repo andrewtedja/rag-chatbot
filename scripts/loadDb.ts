@@ -29,13 +29,13 @@ const openai = new OpenAI({
 });
 
 const itbData = [
+	"https://itb.ac.id/program-studi-sarjana",
 	"https://en.wikipedia.org/wiki/Bandung_Institute_of_Technology",
 	"https://six.itb.ac.id/pub/kur2024",
 	"https://akademik.itb.ac.id/id/program/S1/S",
 	"https://akademik.itb.ac.id/id/program/S1/M",
 	"https://akademik.itb.ac.id/id/program/S1/W",
 	"https://akademik.itb.ac.id/id/program/S1/X",
-	"https://itb.ac.id/",
 	"https://itb.ac.id/undergraduate",
 	"https://itb.ac.id/contact",
 	"https://itb.ac.id/sejarah",
@@ -67,8 +67,13 @@ const createCollection = async (
 		});
 		console.log("Collection created:", res);
 	} catch (error) {
-		if (error instanceof Error && error.name === "CollectionAlreadyExistsError") {
-			console.log(`Collection '${ASTRA_DB_COLLECTION}' already exists, skipping creation...`);
+		if (
+			error instanceof Error &&
+			error.name === "CollectionAlreadyExistsError"
+		) {
+			console.log(
+				`Collection '${ASTRA_DB_COLLECTION}' already exists, skipping creation...`
+			);
 		} else {
 			throw error;
 		}

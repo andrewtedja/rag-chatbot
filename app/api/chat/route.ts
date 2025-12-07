@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { DataAPIClient } from "@datastax/astra-db-ts";
+import Groq from "groq-sdk";
 
 export async function POST(req: Request) {
 	const { messages } = await req.json();
 	const userMessage = messages[messages.length - 1].content;
+
+	const groq = new Groq({ apiKey: process.env.GROQ_API_KEY! });
 
 	const openai = new OpenAI({
 		apiKey: process.env.OPENAI_API_KEY!,
@@ -58,8 +61,8 @@ export async function POST(req: Request) {
 		// SYSTEM PROMPTING RAG
 		const systemPrompt = `
 		Kamu adalah Roga, asisten AI bermaskot gajah dari ITB. Jawab ramah, jelas, lucu, informatif; jika ditanya identitas, perkenalkan diri.
-        Gunakan hanya konteks berikut untuk fakta ITB. Jika pertanyaan tidak terkait ITB (kampus, akademik, fakultas/jurusan, fasilitas, organisasi, dosen, kehidupan mahasiswa, organisasi/himpunan, sejarah, pendaftaran, beasiswa, atau lainnya),
-        dan jika konteks tidak memuat jawabannya, try your best to answer dengan gunakan pengetahuan umum tentang ITB; jika tetap tidak tahu, jawab: "Maaf, untuk pertanyaan tersebut, aku tidak bisa menjawab."
+        Gunakan hanya konteks berikut untuk fakta ITB. Jika ditanya suatu list yang penting (seperti jurusan), jawab dengan lengkap dan benar. Jika pertanyaan tidak terkait ITB (kampus, akademik, fakultas/jurusan, fasilitas, organisasi, dosen, kehidupan mahasiswa, organisasi/himpunan, sejarah, pendaftaran, beasiswa, atau lainnya),
+        dan jika konteks tidak memuat jawabannya, try your best to answer dengan gunakan pengetahuan umum tentang ITB dan cite url if needed; jika tetap tidak tahu, jawab: "Maaf, untuk pertanyaan tersebut, aku tidak bisa menjawab."
         Larangan: jangan menyebut konteks/dokumen/RAG; jangan meminta maaf kecuali saat tidak tahu; jangan memakai frasa seperti "berdasarkan konteks"; jangan mengembalikan gambar.
         Gunakan markdown bila relevan dan minimalkan whitespace tanpa mengorbankan keterbacaan.
 
@@ -69,6 +72,23 @@ export async function POST(req: Request) {
     `;
 
 		// STREAMING RESPONSE (useChat())
+
+		// Groq
+		// (alt: llama-3.3-70b-versatile)
+		// (alt: llama-3.1-8b-instant) aga ngawur ini
+		// const completion = await groq.chat.completions.create({
+		// 	model: "llama-3.3-70b-versatile",
+		// 	stream: true,
+		// 	messages: [{ role: "system", content: systemPrompt }, ...messages],
+		// 	max_tokens: 2048,
+		// 	temperature: 1.0,
+		// });
+
+		// NOTES FOR SELF:
+		// temp itu kalo tinggi bakal ngarang, kalo rendah bakal konservatif
+		// top_p itu seberapa besar range pilihan kata (0.1 -> hanya kata yg umum aja)
+
+		// OpenAI
 		const completion = await openai.chat.completions.create({
 			model: "gpt-4o-mini",
 			stream: true,
