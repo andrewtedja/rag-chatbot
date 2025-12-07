@@ -58,13 +58,21 @@ const splitter = new RecursiveCharacterTextSplitter({
 const createCollection = async (
 	similarityMetric: SimilarityMetric = "dot_product"
 ) => {
-	const res = await db.createCollection(ASTRA_DB_COLLECTION, {
-		vector: {
-			dimension: 1536,
-			metric: similarityMetric,
-		},
-	});
-	console.log(res);
+	try {
+		const res = await db.createCollection(ASTRA_DB_COLLECTION, {
+			vector: {
+				dimension: 1536,
+				metric: similarityMetric,
+			},
+		});
+		console.log("Collection created:", res);
+	} catch (error) {
+		if (error instanceof Error && error.name === "CollectionAlreadyExistsError") {
+			console.log(`Collection '${ASTRA_DB_COLLECTION}' already exists, skipping creation...`);
+		} else {
+			throw error;
+		}
+	}
 };
 
 const loadSampleData = async () => {

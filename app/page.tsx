@@ -8,8 +8,11 @@ import { LoadingBubble } from "@/components/LoadingBubble";
 import { PromptSuggestionsRow } from "@/components/PromptSuggestionsRow";
 import Navbar from "@/components/Navbar";
 import { Send } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
+	const bottomRef = useRef<HTMLDivElement | null>(null);
+
 	const {
 		isLoading,
 		messages,
@@ -18,6 +21,10 @@ export default function Home() {
 		handleSubmit,
 		setInput,
 	} = useChat();
+
+	useEffect(() => {
+		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, [messages, isLoading]);
 
 	const noMessages = messages.length === 0;
 
@@ -60,6 +67,7 @@ export default function Home() {
 								<Bubble key={`message-${index}`} message={message} />
 							))}
 							{isLoading && <LoadingBubble />}
+							<div ref={bottomRef} />
 						</div>
 					)}
 				</div>

@@ -15,6 +15,21 @@ export const Bubble = ({ message }: BubbleProps) => {
 	const isUser = message.role === "user";
 	if (!message?.content?.trim()) return null;
 
+	// Format timestamp
+	const formatTime = (date: Date | undefined) => {
+		if (!date) return "";
+		const messageDate = new Date(date);
+		const now = new Date();
+		const diffInSeconds = Math.floor((now.getTime() - messageDate.getTime()) / 1000);
+
+		if (diffInSeconds < 60) return "just now";
+		if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+		if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+
+		// For older messages, show the time
+		return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+	};
+
 	return (
 		<div className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
 			<div
@@ -54,6 +69,11 @@ export const Bubble = ({ message }: BubbleProps) => {
 						{message.content}
 					</ReactMarkdown>
 				</div>
+				{message.createdAt && (
+					<div className={`text-xs text-muted-foreground mt-2 ${isUser ? "text-right" : "text-left"}`}>
+						{formatTime(message.createdAt)}
+					</div>
+				)}
 			</div>
 		</div>
 	);
