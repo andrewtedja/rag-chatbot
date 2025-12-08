@@ -20,14 +20,20 @@ export const Bubble = ({ message }: BubbleProps) => {
 		if (!date) return "";
 		const messageDate = new Date(date);
 		const now = new Date();
-		const diffInSeconds = Math.floor((now.getTime() - messageDate.getTime()) / 1000);
+		const diffInSeconds = Math.floor(
+			(now.getTime() - messageDate.getTime()) / 1000
+		);
 
 		if (diffInSeconds < 60) return "just now";
 		if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-		if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+		if (diffInSeconds < 86400)
+			return `${Math.floor(diffInSeconds / 3600)}h ago`;
 
 		// For older messages, show the time
-		return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+		return messageDate.toLocaleTimeString([], {
+			hour: "2-digit",
+			minute: "2-digit",
+		});
 	};
 
 	return (
@@ -56,21 +62,27 @@ export const Bubble = ({ message }: BubbleProps) => {
 				className={`
           relative max-w-xl px-5 py-3.5 rounded-2xl shadow-md border border-border
           text-foreground
-          ${isUser ? "bg-card rounded-br-md" : "bg-card rounded-bl-md"}
+          ${isUser ? "bg-card rounded-br-md" : "bg-card pl-8 rounded-bl-md"}
         `}
 			>
-				<div className="prose prose-sm dark:prose-invert max-w-none
+				<div
+					className="prose prose-sm dark:prose-invert max-w-none
 					[&_a]:text-blue-500 [&_a]:underline hover:[&_a]:text-blue-600
 					dark:[&_a]:text-blue-400 dark:hover:[&_a]:text-blue-300
 					[&_ul]:list-disc [&_ul]:pl-4 [&_ul]:my-2
 					[&_ol]:list-decimal [&_ol]:pl-4 [&_ol]:my-2
-					[&_li]:my-1">
+					[&_li]:my-1"
+				>
 					<ReactMarkdown remarkPlugins={[remarkGfm]}>
 						{message.content}
 					</ReactMarkdown>
 				</div>
 				{message.createdAt && (
-					<div className={`text-xs text-muted-foreground mt-2 ${isUser ? "text-right" : "text-left"}`}>
+					<div
+						className={`text-xs text-muted-foreground mt-2 ${
+							isUser ? "text-right" : "text-left"
+						}`}
+					>
 						{formatTime(message.createdAt)}
 					</div>
 				)}

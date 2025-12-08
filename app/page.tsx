@@ -6,6 +6,7 @@ import { useChat } from "ai/react";
 import { Bubble } from "@/components/Bubble";
 import { LoadingBubble } from "@/components/LoadingBubble";
 import { PromptSuggestionsRow } from "@/components/PromptSuggestionsRow";
+import { HibernationWarning } from "@/components/HibernationWarning";
 import Navbar from "@/components/Navbar";
 import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -45,6 +46,7 @@ export default function Home() {
 			{/* Main Content */}
 			<main className="flex-1 overflow-y-auto">
 				<div className="max-w-4xl mx-auto px-4 py-8 h-full flex flex-col">
+					<HibernationWarning />
 					{noMessages ? (
 						<div className="flex-1 flex flex-col items-center justify-center space-y-8">
 							<div className="text-center space-y-4">
@@ -78,16 +80,17 @@ export default function Home() {
 				<div className="max-w-4xl mx-auto px-4 py-4">
 					<form onSubmit={handleSubmit} className="flex items-center gap-3">
 						<input
-							className="flex-1 px-4 py-3 rounded-xl bg-background text-foreground border border-border placeholder:text-muted-foreground focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 outline-0 transition"
+							className="flex-1 px-4 py-3 rounded-xl bg-background text-foreground border border-border placeholder:text-muted-foreground focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400 outline-0 transition disabled:opacity-50 disabled:cursor-not-allowed"
 							onChange={handleInputChange}
 							value={input}
 							placeholder="Ask me something about ITB..."
+							disabled={isLoading}
 						/>
 
 						<button
 							type="submit"
-							disabled={!input.trim()}
-							className="p-3 rounded-xl cursor-pointer bg-indigo-300 text-white hover:bg-indigo-400 active:scale-95 transition flex items-center justify-center"
+							disabled={!input.trim() || isLoading}
+							className="p-3 rounded-xl cursor-pointer bg-indigo-300 text-white hover:bg-indigo-400 active:scale-95 transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-300"
 						>
 							<Send size={20} />
 						</button>
