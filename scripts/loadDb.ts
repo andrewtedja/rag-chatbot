@@ -52,6 +52,7 @@ const itbData = [
 	"https://itb.ac.id/rektor",
 	"https://itb.ac.id/multikampus",
 	"https://itb.ac.id/tentang-itb",
+	"https://www.liputan6.com/lifestyle/read/6197074/16-rekomendasi-tempat-makan-enak-di-dekat-institut-teknologi-bandung-terfavorit-2025?page=10",
 ];
 
 const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);

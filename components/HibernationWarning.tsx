@@ -8,7 +8,7 @@ export const HibernationWarning = () => {
 	if (!isVisible) return null;
 
 	return (
-		<div className="absolute left-12 flex items-start gap-2 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-xs">
+		<div className="absolute left-12 flex items-start gap-2 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-xs z-[1000]">
 			<p className="text-amber-800 dark:text-amber-200 flex-1">
 				<strong>Note:</strong> Database hibernates setelah 48 jam inactive.
 				Mohon menunggu 10-20 detik jika first load.
