@@ -2,7 +2,7 @@
 
 A friendly campus assistant **(Roga)** powered by a simple **RAG pipeline** to help ITB students find information **faster** and more **efficiently**.
 
-Designed for **simplicity**, **clarity**, and a **fun experience**.
+Designed for understanding the process of Retrieval-Augmented Generation (RAG), focusing on **simplicity**, **clarity**, and a **fun experience**.
 
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
